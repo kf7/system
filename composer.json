@@ -22,9 +22,7 @@
     "php-coveralls/php-coveralls": "2.*",
     "ext-curl": "*"
   },
-  {
-    "autoload": {
-        "psr-4": {"KF7\\System\\": "src/"}
-    }
+  "autoload": {
+      "psr-4": {"KF7\\System\\": "src/"}
   }
 }
