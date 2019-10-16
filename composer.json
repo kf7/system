@@ -1,0 +1,30 @@
+{
+  "name": "kf7/system",
+  "description": "Kohana7(KF7) - PHP-7-compatible replacement for Kohana framework",
+  "license": "BSD-3-Clause",
+  "keywords": ["kf7", "kohana7", "kohana", "framework", "php"],
+  "homepage": "https://kf7.github.io",
+  "authors": [{"name": "KF7 team", "homepage": "https://kf7.github.io", "role": "developer"}],
+  "support": {
+    "source": "https://github.com/kf7/system",
+    "issues": "https://github.com/kf7/system/issues",
+    "docs": "https://github.com/kf7/system/wiki",
+    "forum": "https://kf7.discourse.group",
+    "chat": "https://telegram.me/kf7_chat",
+  },
+  "require": {
+    "php": ">=7.1 <8.0",
+    "ext-dom": "*",
+    "psr/log": "1.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "7.*",
+    "php-coveralls/php-coveralls": "2.*",
+    "ext-curl": "*"
+  },
+  {
+    "autoload": {
+        "psr-4": {"KF7\\System\\": "src/"}
+    }
+  }
+}
