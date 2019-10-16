@@ -1,6 +1,8 @@
 {
   "name": "kf7/system",
   "description": "Kohana7(KF7) - PHP-7-compatible replacement for Kohana framework",
+  "version": "0.0.1",
+  "type": "library",
   "license": "BSD-3-Clause",
   "keywords": ["kf7", "kohana7", "kohana", "framework", "php"],
   "homepage": "https://kf7.github.io",
