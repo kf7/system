@@ -10,7 +10,7 @@
     "issues": "https://github.com/kf7/system/issues",
     "docs": "https://github.com/kf7/system/wiki",
     "forum": "https://kf7.discourse.group",
-    "chat": "https://telegram.me/kf7_chat",
+    "chat": "https://telegram.me/kf7_chat"
   },
   "require": {
     "php": ">=7.1 <8.0",
