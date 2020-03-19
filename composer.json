@@ -2,7 +2,7 @@
   "name": "kf7/system",
   "description": "PHP-7-compatible replacement for Kohana/Koseven framework",
   "keywords": ["kf7", "kohana7", "koseven", "ko7", "kohana", "framework", "php"],
-  "version": "0.0.1",
+  "version": "3.5.0",
   "type": "library",
   "license": "BSD-3-Clause",
   "homepage": "https://kf7.github.io",
@@ -17,6 +17,7 @@
   "require": {
     "php": "^7.1",
     "ext-dom": "*",
+    "ext-mbstring": "*",
     "symfony/polyfill-ctype": "^1.13",
     "symfony/polyfill-php72": "^1.13",
     "symfony/polyfill-php73": "^1.13",
