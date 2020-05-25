@@ -1,2 +1,5 @@
-application/cache/*
-application/logs/*
+/composer.lock
+/phpunit.xml
+/build
+/vendor
+/nbproject

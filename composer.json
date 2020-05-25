@@ -2,11 +2,26 @@
   "name": "kf7/system",
   "description": "PHP-7-compatible replacement for Kohana/Koseven framework",
   "keywords": ["kf7", "kohana7", "koseven", "ko7", "kohana", "framework", "php"],
-  "version": "3.5.0",
-  "type": "library",
   "license": "BSD-3-Clause",
   "homepage": "https://kf7.github.io",
-  "authors": [{"name": "Kohana team", "homepage": "https://kf7.github.io/team", "role": "developer"}],
+  "authors": [
+    {
+      "name": "Kohana7 team", 
+      "homepage": "https://kf7.github.io/team",
+      "role": "developer"
+    },
+    {
+      "name": "Koseven Team",
+      "homepage": "https://koseven.dev/",
+      "role": "developer"
+    },
+    {
+      "name": "Kohana Team",
+      "email": "team@kohanaframework.org",
+      "homepage": "http://kohanaframework.org/team",
+      "role": "developer"
+    }
+  ],
   "support": {
     "source": "https://github.com/kf7/system",
     "issues": "https://github.com/kf7/system/issues",
@@ -15,28 +30,26 @@
     "chat": "https://telegram.me/kf7_chat"
   },
   "require": {
-    "php": "^7.1",
-    "ext-dom": "*",
+    "php": "^7.2",
     "ext-mbstring": "*",
+    "ext-libxml": "*",
     "symfony/polyfill-ctype": "^1.13",
-    "symfony/polyfill-php72": "^1.13",
     "symfony/polyfill-php73": "^1.13",
     "symfony/polyfill-php74": "^1.13",
-    "symfony/polyfill-mbstring": "^1.13",
     "symfony/polyfill-iconv": "^1.13",
-    "psr/log": "^1.0"
+    "psr/log": "^1.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.5"
+    "phpunit/phpunit": "^8.5"
   },
   "autoload": {
       "psr-4": {
-        "KF7\\System\\": "src/System/"
+        "Kohana7\\": "src/"
       }
   },
   "autoload-dev": {
       "psr-4": {
-        "KF7\\System\\Test\\": "tests/"
+        "Kohana7\\Tests\\": "tests/"
       }
   }
 }
