@@ -5,6 +5,6 @@ namespace Kohana;
 /**
  * @inheritdoc
  */
-class Text extends AbstractText
+class URL extends AbstractURL
 {
 }

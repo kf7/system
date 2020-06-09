@@ -1,138 +1,120 @@
 <?php
-namespace Kohana7\Log;
 
-use Kohana7\Text;
-use Psr\Log\LogLevel;
+namespace Kohana\Log;
+
+use Kohana\Exception;
+use Kohana\Text;
 use Psr\Log\LoggerInterface;
-use Exception;
+use Psr\Log\LogLevel;
+
+use function array_search;
+use function array_slice;
+use function in_array;
+use function is_array;
+use function range;
+use function register_shutdown_function;
+use function time;
+
+use const LOG_ALERT;
+use const LOG_CRIT;
+use const LOG_DEBUG;
+use const LOG_EMERG;
+use const LOG_ERR;
+use const LOG_INFO;
+use const LOG_NOTICE;
+use const LOG_WARNING;
 
 /**
  * Message logging with observer-based log writing (loggers).
  */
-abstract class AbstractLogger extends LogLevel implements LoggerInterface
+abstract class AbstractLog implements LoggerInterface
 {
-
-    /*
-     * public const EMERGENCY = LOG_EMERG; // 0
-     * public const ALERT = LOG_ALERT; // 1
-     * public const CRITICAL = LOG_CRIT; // 2
-     * public const ERROR = LOG_ERR; // 3
-     * public const WARNING = LOG_WARNING; // 4
-     * public const NOTICE = LOG_NOTICE; // 5
-     * public const INFO = LOG_INFO; // 6
-     * public const DEBUG = LOG_DEBUG; // 7
-     *
-     * const EMERGENCY = 'emergency';
-     * const ALERT = 'alert';
-     * const CRITICAL = 'critical';
-     * const ERROR = 'error';
-     * const WARNING = 'warning';
-     * const NOTICE = 'notice';
-     * const INFO = 'info';
-     * const DEBUG = 'debug';
-     */
-
     /**
-     *
-     * @var array Priority levels of logging: LOG_EMERG(0) - LOG_DEBUG(7)
+     * @var array Priority levels of logging: `LOG_EMERG`(0) - `LOG_DEBUG`(7).
      */
     public const LEVELS = [
-        \LOG_EMERG => static::EMERGENCY,
-        \LOG_ALERT => static::ALERT,
-        \LOG_CRIT => static::CRITICAL,
-        \LOG_ERR => static::ERROR,
-        \LOG_WARNING => static::WARNING,
-        \LOG_NOTICE => static::NOTICE,
-        \LOG_INFO => static::INFO,
-        \LOG_DEBUG => static::DEBUG
+        LOG_EMERG => LogLevel::EMERGENCY,
+        LOG_ALERT => LogLevel::ALERT,
+        LOG_CRIT => LogLevel::CRITICAL,
+        LOG_ERR => LogLevel::ERROR,
+        LOG_WARNING => LogLevel::WARNING,
+        LOG_NOTICE => LogLevel::NOTICE,
+        LOG_INFO => LogLevel::INFO,
+        LOG_DEBUG => LogLevel::DEBUG,
     ];
 
     /**
-     *
-     * @var bool immediately write to logs messages at shutdown
+     * @var bool Immediately write to logs messages at shutdown.
      */
-    protected $writeAtShutdown = false;
+    protected $writeOnShutdown = false;
 
     /**
-     *
-     * @var array list of added messages
+     * @var array List of added messages.
      */
     protected $messages = [];
 
     /**
-     *
-     * @var LoggerInterface[] list of log writers
+     * @var WriterInterface[] List of log writers.
      */
     protected $writers = [];
 
     /**
      * Enable writing at shutdown.
      *
-     * @param bool $writeAtShutdown
-     * @return void
+     * @param bool $writeOnShutdown Write the logs at shutdown.
      */
-    public function __construct(bool $writeAtShutdown = false)
+    public function __construct(bool $writeOnShutdown = false)
     {
-        $this->writeAtShutdown = $writeAtShutdown;
-        if ($this->writeAtShutdown) {
-            // Write the logs at shutdown
-            \register_shutdown_function([
-                $this,
-                'write'
-            ]);
+        $this->writeOnShutdown = $writeOnShutdown;
+        if ($this->writeOnShutdown) {
+            register_shutdown_function([$this, 'write']);
         }
     }
 
     /**
-     * Attaches a log writer, and optionally limits the levels of messages that
-     * will be written by the writer.
+     * Attaches a log writer, and optionally limits the levels of messages that will be written by the writer.
      *
-     * @param LoggerInterface $writer
-     *            instance
-     * @param array|int $levels
-     *            array of log levels to write OR max level to write
-     * @param int $minLevel
+     * @param LoggerInterface $writer instance
+     * @param array|int $levels array of log levels to write OR max level to write
+     * @param int $minLevel min level to write
      * @return $this
      */
-    public function attachWriter(LoggerInterface $writer, $levels = [], $minLevel = 0)
+    public function attachWriter(Writer $writer, $levels = [], $minLevel = 0)
     {
-        if (! \is_array($levels)) {
-            $levels = \range($minLevel, $levels);
+        if (!is_array($levels)) {
+            $levels = range($minLevel, $levels);
         }
         $this->writers[] = [
             'object' => $writer,
-            'levels' => $levels
+            'levels' => $levels,
         ];
+
         return $this;
     }
 
     /**
-     * Detaches a log writer.
-     * The same writer object must be used.
+     * Detaches a log writer. The same writer object must be used.
      *
-     * @param LoggerInterface $writer
-     *            instance
+     * @param LoggerInterface $writer instance
      * @return $this
      */
     public function detachWriter(LoggerInterface $writer)
     {
-        $key = \array_search($writer, $this->writers);
+        $key = array_search($writer, $this->writers, true);
         if ($key !== false) {
             // Remove the writer
             unset($this->writers[$key]);
         }
+
         return $this;
     }
 
     /**
      * Adds a message to the log.
      *
-     * @param string|int $level
-     *            message level
-     * @param string|object $message
-     *            message text
-     * @param array $context
-     *            message values
+     * @param int|string $level message level
+     * @param object|string $message message text
+     * @param array $context message values
      * @return $this
      * @uses Text::interpolate() interpolates context values into the message placeholders.
      */
@@ -146,7 +128,7 @@ abstract class AbstractLogger extends LogLevel implements LoggerInterface
         if (isset($context['exception']) && $context['exception'] instanceof Exception) {
             $trace = $context['exception']->getTrace();
         } else {
-            $trace = \array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 1);
+            $trace = array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 1);
         }
         // create a new message
         $this->messages[] = [
@@ -157,19 +139,18 @@ abstract class AbstractLogger extends LogLevel implements LoggerInterface
             'file' => $trace[0]['file'] ?? null,
             'line' => $trace[0]['line'] ?? null,
             'class' => $trace[0]['class'] ?? null,
-            'function' => $trace[0]['function'] ?? null
+            'function' => $trace[0]['function'] ?? null,
         ];
         if ($this->writeAtShutdown) {
             // Write logs as they are added
             $this->write();
         }
+
         return $this;
     }
 
     /**
      * Write and clear all of the messages.
-     *
-     * @return void
      */
     public function write()
     {
@@ -186,7 +167,7 @@ abstract class AbstractLogger extends LogLevel implements LoggerInterface
                     // Filtered messages
                     $filtered = [];
                     foreach ($messages as $message) {
-                        if (\in_array($message['level'], $writer['levels'])) {
+                        if (in_array($message['level'], $writer['levels'], true)) {
                             // Writer accepts this kind of message
                             $filtered[] = $message;
                         }
