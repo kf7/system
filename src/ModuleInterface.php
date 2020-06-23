@@ -38,6 +38,11 @@ interface ModuleInterface
     public const MEDIA_DIR = 'media';
 
     /**
+     * @var string Documentation and API directory.
+     */
+    public const DOC_DIR = 'docs';
+
+    /**
      * @var array Common directories of module.
      */
     public const DIRS = [
@@ -69,13 +74,6 @@ interface ModuleInterface
      * @return string Identifier MUST be `alnum` string.
      */
     public function getId(): string;
-
-    /**
-     * Returns module name.
-     *
-     * @return string
-     */
-    public function getName(): string;
 
     /**
      * Returns module version.

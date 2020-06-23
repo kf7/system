@@ -22,4 +22,12 @@ abstract class AbstractModule implements ModuleInterface
     {
         return [];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getId(): string
+    {
+        // TODO: Implement getId() method.
+    }
 }

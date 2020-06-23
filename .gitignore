@@ -125,4 +125,5 @@ api/
 
 # Results
 /phpunit*.xml
+*.cache
 .php_cs.cache
