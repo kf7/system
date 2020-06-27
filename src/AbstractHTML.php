@@ -139,7 +139,7 @@ abstract class AbstractHTML
      */
     public static function chars($value, bool $doubleEncode = true): string
     {
-        return htmlspecialchars((string) $value, static::getEscapeFlags(), Kohana::$charset, $doubleEncode);
+        return htmlspecialchars((string)$value, static::getEscapeFlags(), Module::$charset, $doubleEncode);
     }
 
     /**
@@ -152,7 +152,7 @@ abstract class AbstractHTML
      */
     public static function entities($value, bool $doubleEncode = true): string
     {
-        return htmlentities((string) $value, static::getEscapeFlags(), Kohana::$charset, $doubleEncode);
+        return htmlentities((string)$value, static::getEscapeFlags(), Module::$charset, $doubleEncode);
     }
 
     /**

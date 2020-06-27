@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Kohana\Filesystem;
 
 use Kohana\ModuleInterface;
@@ -17,17 +15,17 @@ use const DIRECTORY_SEPARATOR;
 abstract class AbstractCascade
 {
     /**
-     * @var array Directories with merged files.
+     * @var string[] Directories with merged files.
      */
     protected $mergeFilesInDirectories = [
         ModuleInterface::CONFIG_DIR,
-        ModuleInterface::LANG_DIR,
+        ModuleInterface::I18N_DIR,
     ];
 
     /**
-     * @var array Ignored files.
+     * @var string[] Ignore by patterns.
      */
-    protected $ignoreFiles = ['.svn', '.git', '.gitignore', '.gitkeep'];
+    protected $ignorePatterns = ['.*', '*~'];
 
     /**
      * @var array Root paths to application, modules and system.
@@ -160,8 +158,7 @@ abstract class AbstractCascade
             }
             // create a new iterator
             $iterator = new RecursiveDirectoryIterator($path . $directory);
-            |
-            RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+            //RecursiveDirectoryIterator::FOLLOW_SYMLINKS
             foreach ($iterator as $file) {
                 // skip all hidden files and UNIX backup files
                 if (in_array($file->getFilename(), $this->ignoreFiles)) {

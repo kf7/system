@@ -6,9 +6,14 @@ use function array_pop;
 use function count;
 use function implode;
 use function is_string;
+use function mb_strlen;
+use function mb_substr;
 use function preg_match;
+use function rtrim;
 use function sprintf;
+use function strlen;
 use function strtr;
+use function trim;
 
 /**
  * Text helper class. Provides simple methods for working with text.
@@ -25,9 +30,9 @@ abstract class AbstractText
      */
     public static $units = [
         1000000000 => 'billion',
-        1000000    => 'million',
-        1000       => 'thousand',
-        100        => 'hundred',
+        1000000 => 'million',
+        1000 => 'thousand',
+        100 => 'hundred',
         90 => 'ninety',
         80 => 'eighty',
         70 => 'seventy',
@@ -46,15 +51,15 @@ abstract class AbstractText
         12 => 'twelve',
         11 => 'eleven',
         10 => 'ten',
-        9  => 'nine',
-        8  => 'eight',
-        7  => 'seven',
-        6  => 'six',
-        5  => 'five',
-        4  => 'four',
-        3  => 'three',
-        2  => 'two',
-        1  => 'one',
+        9 => 'nine',
+        8 => 'eight',
+        7 => 'seven',
+        6 => 'six',
+        5 => 'five',
+        4 => 'four',
+        3 => 'three',
+        2 => 'two',
+        1 => 'one',
     ];
 
     /**
@@ -67,17 +72,17 @@ abstract class AbstractText
      */
     public static function limitWords($str, int $limit = 100, string $endChar = '…'): string
     {
-        if (\trim($str) === '') {
+        if (trim($str) === '') {
             return $str;
         }
         if ($limit < 1) {
             return $endChar;
         }
         // Only attach the end character if the matched string is shorter than the starting string.
-        if (! \preg_match('/^\s*+(?:\S++\s*+){1,' . $limit . '}/u', $str, $matches)) {
+        if (!preg_match('/^\s*+(?:\S++\s*+){1,' . $limit . '}/u', $str, $matches)) {
             return $endChar;
         }
-        return \rtrim($matches[0]) . (\strlen($matches[0]) === \strlen($str) ? '' : $endChar);
+        return rtrim($matches[0]) . (strlen($matches[0]) === strlen($str) ? '' : $endChar);
     }
 
     /**
@@ -95,7 +100,7 @@ abstract class AbstractText
         string $endChar = '…',
         bool $preserveWords = false
     ): string {
-        if (\trim($str) === '' || \mb_strlen($str, 'UTF-8') <= $limit) {
+        if (trim($str) === '' || mb_strlen($str, 'UTF-8') <= $limit) {
             return $str;
         }
 
@@ -104,16 +109,16 @@ abstract class AbstractText
         }
 
         if (! $preserveWords) {
-            return \rtrim(\mb_substr($str, 0, $limit, 'UTF-8')) . $endChar;
+            return rtrim(mb_substr($str, 0, $limit, 'UTF-8')) . $endChar;
         }
 
         // Don't preserve words. The limit is considered the top limit.
         // No strings with a length longer than $limit should be returned.
-        if (! \preg_match('/^.{0,' . $limit . '}\s/us', $str, $matches)) {
+        if (!preg_match('/^.{0,' . $limit . '}\s/us', $str, $matches)) {
             return $endChar;
         }
 
-        return \rtrim($matches[0]) . (\strlen($matches[0]) === \strlen($str) ? '' : $endChar);
+        return rtrim($matches[0]) . (strlen($matches[0]) === strlen($str) ? '' : $endChar);
     }
 
     /**
@@ -140,29 +145,21 @@ abstract class AbstractText
 
     /**
      * Generates a random string of a given type and length.
-     *
-     *
      *     $str = Text::random(); // 8 character random string
-     *
      * The following types are supported:
-     *
      * alnum
      * :  Upper and lower case a-z, 0-9 (default)
-     *
      * alpha
      * :  Upper and lower case a-z
-     *
      * hexdec
      * :  Hexadecimal characters a-f, 0-9
-     *
      * distinct
      * :  Uppercase characters and numbers that cannot be confused
-     *
      * You can also create a custom type by providing the "pool" of characters
      * as the type.
      *
-     * @param   string  $type   a type of pool, or a string of characters to use as the pool
-     * @param   integer $length length of string to return
+     * @param string $type a type of pool, or a string of characters to use as the pool
+     * @param int $length length of string to return
      * @return  string
      * @uses    UTF8::split
      */
@@ -195,8 +192,8 @@ abstract class AbstractText
                 $pool = '2345679ACDEFHJKLMNPRSTUVWXYZ';
                 break;
             default:
-                $pool = (string) $type;
-                $utf8 = ! UTF8::is_ascii($pool);
+                $pool = (string)$type;
+                $utf8 = !UTF8::is_ascii($pool);
                 break;
         }
 
@@ -258,16 +255,15 @@ abstract class AbstractText
 
     /**
      * Replaces the given words with a string.
-     *
      *     // Displays "What the #####, man!"
      *     echo Text::censor('What the frick, man!', array(
      *         'frick' => '#####',
      *     ));
      *
-     * @param   string  $str                    phrase to replace words in
-     * @param   array   $badwords               words to replace
-     * @param   string  $replacement            replacement string
-     * @param   boolean $replace_partial_words  replace words across word boundaries (space, period, etc)
+     * @param string $str phrase to replace words in
+     * @param array $badwords words to replace
+     * @param string $replacement replacement string
+     * @param bool $replace_partial_words replace words across word boundaries (space, period, etc)
      * @return  string
      * @uses    UTF8::strlen
      */
@@ -313,7 +309,7 @@ abstract class AbstractText
         for ($i = 0, $max = strlen($word); $i < $max; ++$i) {
             foreach ($words as $w) {
                 // Once a difference is found, break out of the loops
-                if (! isset($w[$i]) or $w[$i] !== $word[$i]) {
+                if (!isset($w[$i]) or $w[$i] !== $word[$i]) {
                     break 2;
                 }
             }
@@ -389,7 +385,11 @@ abstract class AbstractText
         // Find and replace all email addresses that are not part of an existing html mailto anchor
         // Note: The "58;" negative lookbehind prevents matching of existing encoded html mailto anchors
         //       The html entity for a colon (:) is &#58; or &#058; or &#0058; etc.
-        return preg_replace_callback('~\b(?<!href="mailto:|58;)(?!\.)[-+_a-z0-9.]++(?<!\.)@(?![-.])[-a-z0-9.]+(?<!\.)\.[a-z]{2,6}\b(?!</a>)~i', 'Text::_auto_link_emails_callback', $text);
+        return preg_replace_callback(
+            '~\b(?<!href="mailto:|58;)(?!\.)[-+_a-z0-9.]++(?<!\.)@(?![-.])[-a-z0-9.]+(?<!\.)\.[a-z]{2,6}\b(?!</a>)~i',
+            'Text::_auto_link_emails_callback',
+            $text
+        );
     }
 
     protected static function _auto_link_emails_callback($matches)
@@ -400,13 +400,11 @@ abstract class AbstractText
     /**
      * Automatically applies "p" and "br" markup to text.
      * Basically [nl2br](http://php.net/nl2br) on steroids.
-     *
      *     echo Text::auto_p($text);
-     *
      * [!!] This method is not foolproof since it uses regex to parse HTML.
      *
-     * @param   string  $str    subject
-     * @param   boolean $br     convert single linebreaks to <br />
+     * @param string $str subject
+     * @param bool $br convert single linebreaks to <br />
      * @return  string
      */
     public static function auto_p($str, $br = true)
@@ -459,10 +457,10 @@ abstract class AbstractText
      *
      *     echo Text::bytes(filesize($file));
      *
-     * @param   integer $bytes      size in bytes
-     * @param   string  $force_unit a definitive unit
-     * @param   string  $format     the return string format
-     * @param   boolean $si         whether to use SI prefixes or IEC
+     * @param int $bytes size in bytes
+     * @param string $force_unit a definitive unit
+     * @param string $format the return string format
+     * @param bool $si whether to use SI prefixes or IEC
      * @return  string
      */
     public static function bytes($bytes, $force_unit = null, $format = null, $si = true)
@@ -473,12 +471,11 @@ abstract class AbstractText
         // IEC prefixes (binary)
         if ($si == false or strpos($force_unit, 'i') !== false) {
             $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
-            $mod   = 1024;
-        }
-        // SI prefixes (decimal)
+            $mod = 1024;
+        } // SI prefixes (decimal)
         else {
             $units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB'];
-            $mod   = 1000;
+            $mod = 1000;
         }
 
         // Determine unit to use
@@ -486,7 +483,7 @@ abstract class AbstractText
             $power = ($bytes > 0) ? floor(log($bytes, $mod)) : 0;
         }
 
-        return sprintf($format, $bytes / pow($mod, $power), $units[$power]);
+        return sprintf($format, $bytes / ($mod ** $power), $units[$power]);
     }
 
     /**

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Kohana\HTTP;
 
 use function explode;
@@ -12,12 +10,13 @@ use function setcookie;
 use function strlen;
 use function time;
 
-use const FILTER_SANITIZE_STRING;
+use const FILTER_FLAG_NO_ENCODE_QUOTES;
+use const FILTER_SANITIZE_FULL_SPECIAL_CHARS;
 use const INPUT_COOKIE;
 use const PHP_VERSION_ID;
 
 /**
- * HTTP cookie helper.
+ * HTTP COOKIE helper.
  */
 abstract class AbstractCookie
 {
@@ -90,10 +89,15 @@ abstract class AbstractCookie
     {
         if (filter_has_var(INPUT_COOKIE, $name)) {
             // Find the position of the split between salt and contents
-            $pos_split = strlen(static::getSalt($name, ''));
+            $position = strlen(static::getSalt($name, ''));
             // Get the cookie value
-            $cookie = filter_input(INPUT_COOKIE, $name, FILTER_SANITIZE_STRING);
-            if (isset($cookie[$pos_split]) && $cookie[$pos_split] === static::SALT_SEPARATOR) {
+            $cookie = filter_input(
+                INPUT_COOKIE,
+                $name,
+                FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+                FILTER_FLAG_NO_ENCODE_QUOTES
+            );
+            if (isset($cookie[$position]) && $cookie[$position] === static::SALT_SEPARATOR) {
                 // Separate the salt and the value
                 [$hash, $value] = explode(static::SALT_SEPARATOR, $cookie, 2);
                 if (static::getSalt($name, $value) === $hash) {
@@ -133,6 +137,9 @@ abstract class AbstractCookie
      */
     public static function setSalt(string $salt): void
     {
+        if (!$salt) {
+            throw new Exception('Empty cookie salt');
+        }
         static::$salt = $salt;
     }
 

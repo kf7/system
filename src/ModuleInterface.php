@@ -2,6 +2,8 @@
 
 namespace Kohana;
 
+use DirectoryIterator;
+
 /**
  * Module manager.
  */
@@ -38,7 +40,7 @@ interface ModuleInterface
     public const MEDIA_DIR = 'media';
 
     /**
-     * @var string Documentation and API directory.
+     * @var string Documentation directory.
      */
     public const DOC_DIR = 'docs';
 
@@ -52,6 +54,7 @@ interface ModuleInterface
         self::CONFIG_DIR,
         self::I18N_DIR,
         self::MEDIA_DIR,
+        self::DOC_DIR,
     ];
 
     /**
@@ -85,7 +88,14 @@ interface ModuleInterface
     /**
      * Returns module routes.
      *
-     * @return array MUST be instances of `Kohana\HTTP\RouteInterface`
+     * @return array MUST be instances of `Kohana\RouteInterface`
      */
     public function getRoutes(): array;
+
+    /**
+     * Returns directory iterator.
+     *
+     * @return DirectoryIterator
+     */
+    public function getDirectoryIterator(): DirectoryIterator;
 }

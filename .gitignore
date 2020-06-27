@@ -16,7 +16,7 @@ ehthumbs.db
 Desktop.ini
 
 # Recycle Bin used on file shares
-$RECYCLE.BIN/
+$RECYCLE.BIN/*
 
 # Windows Installer files
 *.cab
@@ -45,37 +45,10 @@ $RECYCLE.BIN/
 Vagrantfile
 
 #-------------------------------
-# Temporary Files
-#-------------------------------
-writable/cache/*
-!writable/cache/index.html
-
-writable/logs/*
-!writable/logs/index.html
-
-writable/session/*
-!writable/session/index.html
-
-writable/uploads/*
-!writable/uploads/index.html
-
-writable/debugbar/*
-
-php_errors.log
-
-#-------------------------------
-# User Guide Temp Files
-#-------------------------------
-user_guide_src/build/*
-user_guide_src/cilexer/build/*
-user_guide_src/cilexer/dist/*
-user_guide_src/cilexer/pycilexer.egg-info/*
-
-#-------------------------------
 # Test Files
 #-------------------------------
 tests/coverage*
-build/
+build/*
 
 # Don't save phpunit under version control.
 phpunit
@@ -83,8 +56,8 @@ phpunit
 #-------------------------------
 # Composer
 #-------------------------------
-vendor/
-composer.lock
+vendor/*
+*.lock
 
 #-------------------------------
 # IDE / Development Files
@@ -97,19 +70,18 @@ _modules/*
 .php-version
 
 # Jetbrains editors (PHPStorm, etc)
-.idea/
+.idea/*
 *.iml
 .phpstorm.meta.php
-.phpstorm.meta.php/
 
 # Netbeans
-nbproject/
-nbbuild/
-dist/
-nbdist/
+nbproject/*
+nbbuild/*
+dist/*
+nbdist/*
+.nb-gradle/*
 nbactions.xml
 nb-configuration.xml
-.nb-gradle/
 
 # Sublime Text
 *.tmlanguage.cache
@@ -118,12 +90,10 @@ nb-configuration.xml
 *.sublime-workspace
 *.sublime-project
 .phpintel
-api/
 
 # Visual Studio Code
-.vscode/
+.vscode/*
 
 # Results
-/phpunit*.xml
+phpunit*.xml
 *.cache
-.php_cs.cache

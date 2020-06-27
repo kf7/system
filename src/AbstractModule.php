@@ -2,6 +2,8 @@
 
 namespace Kohana;
 
+use DirectoryIterator;
+
 /**
  * Module manager.
  */
@@ -26,8 +28,8 @@ abstract class AbstractModule implements ModuleInterface
     /**
      * @inheritDoc
      */
-    public function getId(): string
+    public function getDirectoryIterator(): DirectoryIterator
     {
-        // TODO: Implement getId() method.
+        return new DirectoryIterator($this->getPath());
     }
 }

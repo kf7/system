@@ -21,7 +21,7 @@ abstract class AbstractException extends RuntimeException
     /**
      * Creates new exception with translated message.
      *
-     * @param string|array $message The exception message or array contain message and placeholders.
+     * @param string|array $message The exception message or array of message and placeholders.
      * @param int $code The exception code.
      * @param Throwable $previous The previous exception used for the exception chaining.
      */

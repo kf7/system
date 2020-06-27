@@ -4,12 +4,8 @@ namespace Kohana;
 
 use function array_merge;
 use function explode;
-use function implode;
 use function is_array;
 use function str_replace;
-use function strtolower;
-
-use const DIRECTORY_SEPARATOR;
 
 /**
  * Internationalization (i18n) class.
@@ -17,19 +13,19 @@ use const DIRECTORY_SEPARATOR;
 abstract class AbstractI18n
 {
     /**
-     * @var string Current language: `en-us` `ru`, etc.
+     * @var string Current language.
      */
-    protected static $language = 'en-us';
+    protected static $language = 'en_US';
 
     /**
-     * @var string Source language: `en-us` `ru`, etc.
+     * @var string Source language.
      */
-    protected static $sourceLanguage = 'en-us';
+    protected static $sourceLanguage = 'en_US';
 
     /**
-     * @var array An array of all available languages.
+     * @var string[] An array of all available languages.
      */
-    protected static $languages = ['en-us' => 'English'];
+    protected static $languages = ['en_US' => 'English'];
 
     /**
      * @var array Cache of loaded languages.
@@ -40,12 +36,12 @@ abstract class AbstractI18n
      * Sets the current language.
      *
      * @param string $language Target language
-     * @return string
+     * @return void
      */
     public static function setLanguage(string $language): void
     {
         if ($language !== static::$language) {
-            static::$language = strtolower(str_replace([' ', '_'], '-', $language));
+            static::$language = str_replace([' ', '-', '.'], '_', $language);
         }
     }
 
@@ -63,17 +59,20 @@ abstract class AbstractI18n
      * Returns the available languages.
      *
      * @param array $languages An array of language/name pairs.
+     * @return void
      */
-    public static function setLanguages(array $languages)
+    public static function setLanguages(array $languages): void
     {
-        if (! isset($languages[static::$sourceLanguage])) {
+        if (!isset($languages[static::$sourceLanguage])) {
             throw new Exception(
-                'Language list not contain source language {language}',
-                ['language' => static::$sourceLanguage]
+                [
+                    'Language list not contain source language {language}',
+                    ['language' => static::$sourceLanguage],
+                ]
             );
         }
         static::$languages = $languages;
-        if (! isset(static::$languages[static::$language])) {
+        if (!isset(static::$languages[static::$language])) {
             static::$language = key(static::$languages);
         }
     }
@@ -94,7 +93,6 @@ abstract class AbstractI18n
      *
      * @param string|array $string Text to translate or array `[text, placeholders]`.
      * @param string|null $language Current language.
-     * @param string $source Source language.
      * @return string
      */
     public static function getText($string, ?string $language = null): string
@@ -102,6 +100,7 @@ abstract class AbstractI18n
         $values = [];
         // Check if $string is array `[text, values]`
         if (is_array($string)) {
+            /** @var string $string */
             [$string, $values] = $string;
         }
         // Set target language if not set
@@ -132,25 +131,34 @@ abstract class AbstractI18n
         // New translation table
         $table = [[]];
         // Split the language: language, region, locale, etc
-        $parts = explode('-', $language);
+        $parts = explode('_', $language);
         // Loop through Paths
-        foreach ([$parts[0], implode(DIRECTORY_SEPARATOR, $parts)] as $path) {
+        foreach ([$parts[0], $language] as $path) {
             // Load files
             // @todo replace
-            $files = Kohana::findFile('i18n', $path);
+            $files = Module::findFiles('i18n', $path);
             // Loop through files
-            if (! empty($files)) {
+            if ($files) {
                 $t = [[]];
                 foreach ($files as $file) {
                     // Merge the language strings into the sub table
-                    $t[] = include($file);
+                    $t[] = static::loadFile($file);
                 }
                 $table[] = $t;
             }
         }
         $table = array_merge(...array_merge(...$table));
-        // Cache the translation table locally
+        // cache the translation table locally
         static::$cache[$language] = $table;
         return static::$cache[$language];
+    }
+
+    /**
+     * @param string $path Path to localization file
+     * @return array
+     */
+    protected static function loadFile(string $path): array
+    {
+        return (array)require($path);
     }
 }

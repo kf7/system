@@ -8,10 +8,9 @@
     backupStaticAttributes="true"
     beStrictAboutChangesToGlobalState="true"
     beStrictAboutOutputDuringTests="true"
-    beStrictAboutTestsThatDoNotTestAnything="true"
     beStrictAboutTodoAnnotatedTests="true">
     <testsuites>
-        <testsuite name="Kohana/System">
+        <testsuite name="kohana/system">
             <directory suffix="Test.php">tests/</directory>
         </testsuite>
     </testsuites>
@@ -21,7 +20,7 @@
     </logging>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src/</directory>
+            <directory>src/</directory>
         </whitelist>
     </filter>
 </phpunit>

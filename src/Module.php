@@ -3,20 +3,28 @@
 namespace Kohana;
 
 /**
- * @inheritdoc
+ * Kohana's system/core module
  */
 class Module extends AbstractModule
 {
     /**
-     * @inheritdoc
+     * @var string Path to base directory
+     */
+    private $path;
+
+    /**
+     * @inheritDoc
      */
     public function getPath(): string
     {
-        return dirname(__DIR__) . DIRECTORY_SEPARATOR;
+        if ($this->path === null) {
+            $this->path = dirname(__DIR__) . DIRECTORY_SEPARATOR;
+        }
+        return $this->path;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getNamespace(): string
     {
@@ -24,18 +32,10 @@ class Module extends AbstractModule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): string
     {
-        return 'kohana';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getName(): string
-    {
-        return 'Kohana';
+        return 'system';
     }
 }

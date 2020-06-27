@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>kf7/system</title>
+    <parser>
+        <default-package-name>Kohana</default-package-name>
+        <target>src</target>
+        <encoding>utf8</encoding>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+            <item>FIXIT</item>
+        </markers>
+        <extensions>
+            <extension>php</extension>
+        </extensions>
+        <visibility>public,protected</visibility>
+    </parser>
+    <transformer>
+        <target>docs/api</target>
+    </transformer>
+    <logging>
+        <level>notice</level>
+        <paths>
+            <default>{APP_ROOT}/build/docs/api.report.log</default>
+            <errors>{APP_ROOT}/build/docs/api.errors.log</errors>
+        </paths>
+    </logging>
+    <transformations>
+        <template name="clean"/>
+    </transformations>
+    <files>
+        <file>*.php</file>
+        <directory>src</directory>
+    </files>
+</phpdoc>

@@ -1,9 +1,0 @@
-# Easy Coding Standarts
-# CLI: php vendor/bin/ecs check src --fix
-parameters:
-    file_extensions:
-        - 'php'
-    sets:
-        - 'psr12'
-    paths:
-        - 'src'
